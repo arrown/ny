@@ -104,7 +104,7 @@ def goto_drone(targetLocation):
 
 	drone.simple_goto(targetLocation)
 
-	while vehicle.mode.name=="GUIDED":
+	while drone.mode.name=="GUIDED":
 		currentDistance = get_distance_metres(targetLocation,drone.location.global_relative_frame)
 		if currentDistance<distanceToTargetLocation*.05:
 			print("Reached target waypoint.")
