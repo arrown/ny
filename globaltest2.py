@@ -147,7 +147,7 @@ def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
         time.sleep(2)
 
 def make_gap(old,new):
-	gap = round(new-(new-old)*0.1,7)
+	gap = round(new-((new-old)*0.1),7)
 	return gap
 	
 arm_and_takeoff(4)
