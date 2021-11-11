@@ -44,6 +44,20 @@ def arm_and_takeoff(aTargetAltitude):
             break
         time.sleep(1)
         
+def arming_rover():
+    print ("Basic pre-arm checks")
+    while not rover.is_armable:
+        print("waiting for vehicle to initialise...")
+        time.sleep(1)
+    
+    print ("Arming motors")
+    rover.mode = VehicleMode("GUIDED")
+    rover.armed = True
+  
+    while not rover.armed:
+        print("waiting for arming...")
+        time.sleep(1)
+   
 def get_location_metres(original_location, dNorth, dEast):
 
     earth_radius = 6378137.0 #Radius of "spherical" earth
@@ -131,7 +145,7 @@ def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
         #print "DEBUG: mode: %s" % vehicle.mode.name
         remainingDistance=get_distance_metres(rover.location.global_relative_frame, targetLocation)
         print("Distance to target: ", remainingDistance)
-        if remainingDistance<=targetDistance*0.01: #Just below target, in case of undershoot.
+        if remainingDistance<=targetDistance*0.25: #Just below target, in case of undershoot.
             print("Reached target")
             break;
         time.sleep(2)
