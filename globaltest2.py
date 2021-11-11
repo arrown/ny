@@ -146,18 +146,26 @@ def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
             break;
         time.sleep(2)
 
+def make_gap(old,new):
+	gap = new-(new-old)*0.1
+	return gap
+	
 arm_and_takeoff(4)
 arming_rover()
 goto_rover(10,12)
 time.sleep(20)
 # swarm code
-wp1 = LocationGlobalRelative(rover.location.global_relative_frame.lat,rover.location.global_relative_frame.lon,4)
+lat = make_gap(drone.location.global_relative_frame.lat,rover.location.glonal_relative_frame.lat)
+lon = make_gap(drone.location.global_relative_frame.lon,rover.location.glonal_relative_frame.lon)
+wp1 = LocationGlobalRelative(lat,lon,4)
 goto_drone(wp1)
 time.sleep(3)
 goto_rover(-7,-13)
 time.sleep(20)
 # swarm code
-wp1 = LocationGlobalRelative(rover.location.global_relative_frame.lat,rover.location.global_relative_frame.lon,4)
+lat = make_gap(drone.location.global_relative_frame.lat,rover.location.glonal_relative_frame.lat)
+lon = make_gap(drone.location.global_relative_frame.lon,rover.location.glonal_relative_frame.lon)
+wp1 = LocationGlobalRelative(lat,lon,4)
 goto_drone(wp1)
 time.sleep(2)
 drone.mode = VehicleMode("LAND")
