@@ -155,7 +155,6 @@ def make_gap(old,new):
 	return gap
 	
 arm_and_takeoff(4)
-arming_rover()
 goto_rover(10,12)
 time.sleep(20)
 # swarm code
