@@ -157,8 +157,10 @@ lat = drone.location.global_relative_frame.lat # drone's latitude
 lon = drone.location.global_relative_frame.lon # drone's longitude
 nlat = dover.location.global_relative_frame.lat # rover's latitude
 nlon = dover.location.global_relative_frame.lon # rover's longitude
-dnorth = (nlat-lat)*rad*math.pi/180
-deast = math.pi/180*(nlon-lon)*rad*math.cos(lat/180*math.pi)
+glat= round(nlat-((nlat-lat)*0.1),7)
+glon = rount(nlon-((nlon-lon)*0.1),7)
+dnorth = (glat-lat)*rad*math.pi/180
+deast = math.pi/180*(glon-lon)*rad*math.cos(lat/180*math.pi)
 goto_position_target_local_ned_drone(dnorth,deast,4)
 time.sleep(3)
 goto_rover(-7,-13)
@@ -167,7 +169,9 @@ lat = drone.location.global_relative_frame.lat # drone's latitude
 lon = drone.location.global_relative_frame.lon # drone's longitude
 nlat = rover.location.global_relative_frame.lat # rover's latitude
 nlon = rover.location.global_relative_frame.lon # rover's longitude
-dnorth = (nlat-lat)*rad*math.pi/180
+glat= round(nlat-((nlat-lat)*0.1),7)
+glon = rount(nlon-((nlon-lon)*0.1),7)
+dnorth = (glat-lat)*rad*math.pi/180
 deast = math.pi/180*(nlon-lon)*rad*math.cos(lat/180*math.pi)
 goto_position_target_local_ned_drone(dnorth,deast,4)
 time.sleep(2)
