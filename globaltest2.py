@@ -99,24 +99,19 @@ def goto_position_target_local_ned_drone(north, east, down):
     # send command to vehicle
     drone.send_mavlink(msg)
 
-def goto_drone(dNorth, dEast, gotoFunction=drone.simple_goto):
+def goto_drone(targetLocation):
+	distanceToTargetLocation = get_distance_meters(targetLocation,vehicle.location.global_relative_frame)
 
-    currentLocation = drone.location.global_relative_frame
-    targetLocation = get_location_metres(currentLocation, dNorth, dEast)
-    targetDistance = get_distance_metres(currentLocation, targetLocation)
-    gotoFunction(targetLocation)
-    
-    #print "DEBUG: targetLocation: %s" % targetLocation
-    #print "DEBUG: targetLocation: %s" % targetDistance
+	vehicle.simple_goto(targetLocation)
 
-    while drone.mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
-        #print "DEBUG: mode: %s" % vehicle.mode.name
-        remainingDistance=get_distance_metres(drone.location.global_relative_frame, targetLocation)
-        print("Distance to target: ", remainingDistance)
-        if remainingDistance<=targetDistance*0.25: #Just below target, in case of undershoot.
-            print("Reached target")
-            break;
-        time.sleep(2)
+	while vehicle.mode.name=="GUIDED":
+		currentDistance = get_distance_meters(targetLocation,vehicle.location.global_relative_frame)
+		if currentDistance<distanceToTargetLocation*.05:
+			print("Reached target waypoint.")
+			time.sleep(2)
+			break
+		time.sleep(1)
+	return None
 
 def goto_position_target_local_ned_rover(north, east, down):
 
