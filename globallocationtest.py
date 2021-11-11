@@ -17,7 +17,7 @@ def arm_and_takeoff(aTargetAltitude):
 
     print ("Basic pre-arm checks")
     # Don't try to arm until autopilot is ready
-    while not vehicle.is_armable:
+    while not Drone.is_armable:
         print (" Waiting for vehicle to initialise...")
         time.sleep(1)
 
