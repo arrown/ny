@@ -47,8 +47,8 @@ aruco_dict  = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
 parameters  = aruco.DetectorParameters_create()
 
 cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 368)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 207)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 fps = 1
 font = cv2.FONT_HERSHEY_PLAIN
 
