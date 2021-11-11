@@ -152,6 +152,7 @@ def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
         time.sleep(2)
 
 arm_and_takeoff(4)
+arming_rover()
 goto_rover(10,12)
 time.sleep(20)
 # swarm code
