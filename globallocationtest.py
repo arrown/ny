@@ -136,11 +136,6 @@ def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
             break;
         time.sleep(2)
 
-    # send command to vehicle on 1 Hz cycle
-    for x in range(0,duration):
-        rover.send_mavlink(msg)
-        time.sleep(1) 
-
 arm_and_takeoff(4)
 goto_rover(10,12)
 # swarm code
