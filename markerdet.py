@@ -4,7 +4,7 @@ import cv2.aruco as aruco
 import sys, time, math
 
 id_to_find = 0
-marker_size = 10
+marker_size = 17.5
 
 def isRotationMatrix(R):
     Rt = np.transpose(R)
