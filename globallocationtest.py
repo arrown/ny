@@ -14,13 +14,11 @@ Rover.groundspeed = 1
 time.sleep(1)
 
 # swarm code
-tmp = y
-while tmp == y:
-    lat = Drone.location.global_relative_frame.lat # drone's latitude
-    lon = Drone.location.global_relative_frame.lon # drone's longitude
-    nlat = Rover.location.global_relative_frame.lat # rover's latitude
-    nlon = Rover.location.global_relative_frame.lon # rover's longitude
+lat = Drone.location.global_relative_frame.lat # drone's latitude
+lon = Drone.location.global_relative_frame.lon # drone's longitude
+nlat = Rover.location.global_relative_frame.lat # rover's latitude
+nlon = Rover.location.global_relative_frame.lon # rover's longitude
 
 dnorth = (nlat-lat)*rad*math.pi/180
 deast = math.pi/180*(nlon-lon)*rad*math.cos(lat/180*math.pi)
-print dnorth,deast
+
