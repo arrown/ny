@@ -35,8 +35,8 @@ def rotationMatrixToEulerAngles(R):
 
 
 calib_path  = ""
-camera_matrix   = np.loadtxt(calib_path+'cameraMatrix_webcam.txt', delimiter=',')
-camera_distortion   = np.loadtxt(calib_path+'cameraDistortion_webcam.txt', delimiter=',')
+camera_matrix   = np.loadtxt(calib_path+'cameraMatrix.txt', delimiter=',')
+camera_distortion   = np.loadtxt(calib_path+'cameraDistortion.txt', delimiter=',')
 
 R_flip  = np.zeros((3,3), dtype=np.float32)
 R_flip[0,0] = 1.0
@@ -47,8 +47,8 @@ aruco_dict  = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
 parameters  = aruco.DetectorParameters_create()
 
 cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 540)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 540)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 368)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 207)
 fps = 1
 font = cv2.FONT_HERSHEY_PLAIN
 
@@ -96,7 +96,7 @@ while True:
 
 
     
-    cv2.imshow('frame', gray)
+    cv2.imshow('frame', frame)
 
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
