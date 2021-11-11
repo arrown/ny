@@ -161,7 +161,7 @@ glat= round(nlat-((nlat-lat)*0.1),7)
 glon = rount(nlon-((nlon-lon)*0.1),7)
 dnorth = (glat-lat)*rad*math.pi/180
 deast = math.pi/180*(glon-lon)*rad*math.cos(lat/180*math.pi)
-goto_position_target_local_ned_drone(dnorth,deast,4)
+goto_position_target_local_ned_drone(dnorth,deast,-4)
 time.sleep(3)
 goto_rover(-7,-13)
 # swarm code
@@ -173,7 +173,7 @@ glat= round(nlat-((nlat-lat)*0.1),7)
 glon = rount(nlon-((nlon-lon)*0.1),7)
 dnorth = (glat-lat)*rad*math.pi/180
 deast = math.pi/180*(glon-lon)*rad*math.cos(lat/180*math.pi)
-goto_position_target_local_ned_drone(dnorth,deast,4)
+goto_position_target_local_ned_drone(dnorth,deast,-4)
 time.sleep(2)
 drone.mode = VehicleMode("LAND")
 while drone.mode!='LAND':
