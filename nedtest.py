@@ -215,9 +215,9 @@ def send_global_velocity(velocity_x, velocity_y, velocity_z, duration):
         time.sleep(1)  
 
 arm_and_takeoff(4)
-goto_position_target_local_ned(2,2)
+goto_position_target_local_ned(2,2,-4)
 time.sleep(3)
-goto_position_target_local_ned(-2,-2)
+goto_position_target_local_ned(-2,-2,-4)
 time.sleep(3)
 vehicle.mode = VehicleMode("LAND")
 while vehicle.mode!='LAND':
