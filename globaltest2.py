@@ -100,12 +100,12 @@ def goto_position_target_local_ned_drone(north, east, down):
     drone.send_mavlink(msg)
 
 def goto_drone(targetLocation):
-	distanceToTargetLocation = get_distance_metres(targetLocation,vehicle.location.global_relative_frame)
+	distanceToTargetLocation = get_distance_metres(targetLocation,drone.location.global_relative_frame)
 
-	vehicle.simple_goto(targetLocation)
+	drone.simple_goto(targetLocation)
 
 	while vehicle.mode.name=="GUIDED":
-		currentDistance = get_distance_metres(targetLocation,vehicle.location.global_relative_frame)
+		currentDistance = get_distance_metres(targetLocation,drone.location.global_relative_frame)
 		if currentDistance<distanceToTargetLocation*.05:
 			print("Reached target waypoint.")
 			time.sleep(2)
