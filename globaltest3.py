@@ -6,8 +6,9 @@ print "connecting to Drone"
 drone = connect("/dev/serial0", baudrate = 57600, wait_ready = True) # telemetry line to raspberry pi
 drone.airspeed = 1
 drone.groundspeed = 0.3
-rover.groundspeed = 0.5
+rover.parameters['WP_SPEED']=0.5
 time.sleep(1)
+targetalt = 4
 
 print "connecting to Rover"
 rover = connect("/dev/", baudrate = 57600, wait_ready = True) #telemetry receiver
@@ -45,20 +46,6 @@ def arm_and_takeoff(aTargetAltitude):
             break
         time.sleep(1)
         
-def arming_rover():
-    print ("Basic pre-arm checks")
-    while not rover.is_armable:
-        print("waiting for vehicle to initialise...")
-        time.sleep(1)
-    
-    print ("Arming motors")
-    rover.mode = VehicleMode("GUIDED")
-    rover.armed = True
-  
-    while not rover.armed:
-        print("waiting for arming...")
-        time.sleep(1)
-   
 def get_location_metres(original_location, dNorth, dEast):
 
     earth_radius = 6378137.0 #Radius of "spherical" earth
@@ -99,23 +86,22 @@ def goto_position_target_local_ned_drone(north, east, down):
     # send command to vehicle
     drone.send_mavlink(msg)
 
-def goto_position_target_global_int_drone(aLocation):
+def goto_drone(oldlat,oldlon,newlat,newlon,targetalt):
+	gaplat = round(newlat-((newlat-oldlat)*0.1),7)
+	gaplon = round(newlon-((newlon-oldlon)*0.1),7)
+	targetLocation = LocationGlobalRelative(gaplat,gaplon,targetalt)
+	distanceToTargetLocation = get_distance_metres(targetLocation,drone.location.global_relative_frame)
 
-    msg = drone.message_factory.set_position_target_global_int_encode(
-        0,       # time_boot_ms (not used)
-        0, 0,    # target system, target component
-        mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT_INT, # frame
-        0b0000111111111000, # type_mask (only speeds enabled)
-        aLocation.lat*1e7, # lat_int - X Position in WGS84 frame in 1e7 * meters
-        aLocation.lon*1e7, # lon_int - Y Position in WGS84 frame in 1e7 * meters
-        aLocation.alt, # alt - Altitude in meters in AMSL altitude, not WGS84 if absolute or relative, above terrain if GLOBAL_TERRAIN_ALT_INT
-        0, # X velocity in NED frame in m/s
-        0, # Y velocity in NED frame in m/s
-        0, # Z velocity in NED frame in m/s
-        0, 0, 0, # afx, afy, afz acceleration (not supported yet, ignored in GCS_Mavlink)
-        0, 0)    # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink) 
-    # send command to vehicle
-    drone.send_mavlink(msg)
+	drone.simple_goto(targetLocation)
+
+	while drone.mode.name=="GUIDED":
+		currentDistance = get_distance_metres(targetLocation,drone.location.global_relative_frame)
+		if currentDistance<distanceToTargetLocation*.05:
+			print("Reached target waypoint.")
+			time.sleep(2)
+			break
+		time.sleep(1)
+	return None
 
 def goto_position_target_local_ned_rover(north, east, down):
 
@@ -149,27 +135,17 @@ def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
             print("Reached target")
             break;
         time.sleep(2)
-
-def make_gap(old,new):
-	gap = round(new-((new-old)*0.1),7)
-	return gap
 	
-arm_and_takeoff(4)
+arm_and_takeoff(targetalt)
 goto_rover(10,12)
 time.sleep(20)
 # swarm code
-lat = make_gap(drone.location.global_relative_frame.lat,rover.location.global_relative_frame.lat)
-lon = make_gap(drone.location.global_relative_frame.lon,rover.location.global_relative_frame.lon)
-wp1 = LocationGlobalRelative(lat,lon,4)
-goto_position_target_global_int_drone(wp1)
+goto_drone(drone.location.global_relative_frame.lat,drone.location.global_relative_frame.lon,newlat,rover.location.global_relative_frame.lat,rover.location.global_relative_frame.lon,targetalt)
 time.sleep(3)
 goto_rover(-7,-13)
 time.sleep(20)
 # swarm code
-lat = make_gap(drone.location.global_relative_frame.lat,rover.location.global_relative_frame.lat)
-lon = make_gap(drone.location.global_relative_frame.lon,rover.location.global_relative_frame.lon)
-wp1 = LocationGlobalRelative(lat,lon,4)
-goto_position_target_global_int_drone(wp1)
+goto_drone(drone.location.global_relative_frame.lat,drone.location.global_relative_frame.lon,newlat,rover.location.global_relative_frame.lat,rover.location.global_relative_frame.lon,targetalt)
 time.sleep(2)
 drone.mode = VehicleMode("LAND")
 while drone.mode!='LAND':
