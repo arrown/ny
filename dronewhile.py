@@ -72,20 +72,6 @@ def get_distance_metres(aLocation1, aLocation2):
     dlong = aLocation2.lon - aLocation1.lon
     return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
 
-def goto_drone(targetLocation):
-	distanceToTargetLocation = get_distance_metres(targetLocation,drone.location.global_relative_frame)
-
-	drone.simple_goto(targetLocation)
-
-	while drone.mode.name=="GUIDED":
-		currentDistance = get_distance_metres(targetLocation,drone.location.global_relative_frame)
-		if currentDistance<distanceToTargetLocation*.05:
-			print("Reached target waypoint.")
-			time.sleep(2)
-			break
-		time.sleep(1)
-	return None
-
 altitude = 4
 arm_and_takeoff(altitude)
 time.sleep(4)
