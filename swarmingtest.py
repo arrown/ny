@@ -114,7 +114,7 @@ def goto_drone(dNorth, dEast, gotoFunction=drone.simple_goto):
         #print "DEBUG: mode: %s" % vehicle.mode.name
         remainingDistance=get_distance_metres(drone.location.global_relative_frame, targetLocation)
         print("Distance to target: ", remainingDistance)
-        if remainingDistance<=targetDistance*0.25: #Just below target, in case of undershoot.
+        if remainingDistance<=targetDistance*0.01: #Just below target, in case of undershoot.
             print("Reached target")
             break;
         time.sleep(2)
@@ -155,7 +155,7 @@ def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
         goto_position_target_local_ned_drone(dnorth,deast,-4)
         remainingDistance=get_distance_metres(rover.location.global_relative_frame, targetLocation)
         print("Distance to target: ", remainingDistance)
-        if remainingDistance<=targetDistance*0.2: #Just below target, in case of undershoot.
+        if remainingDistance<=targetDistance*0.01: #Just below target, in case of undershoot.
             print("Reached target")
             break;
         time.sleep(2)
