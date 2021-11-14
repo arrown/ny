@@ -73,12 +73,12 @@ def get_distance_metres(aLocation1, aLocation2):
     return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
 
 def goto_drone(targetLocation):
-	distanceToTargetLocation = get_distance_meters(targetLocation,vehicle.location.global_relative_frame)
+	distanceToTargetLocation = get_distance_metres(targetLocation,drone.location.global_relative_frame)
 
-	vehicle.simple_goto(targetLocation)
+	drone.simple_goto(targetLocation)
 
-	while vehicle.mode.name=="GUIDED":
-		currentDistance = get_distance_meters(targetLocation,vehicle.location.global_relative_frame)
+	while drone.mode.name=="GUIDED":
+		currentDistance = get_distance_metres(targetLocation,drone.location.global_relative_frame)
 		if currentDistance<distanceToTargetLocation*.05:
 			print("Reached target waypoint.")
 			time.sleep(2)
