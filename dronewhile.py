@@ -93,6 +93,6 @@ time.sleep(4)
 while True:
     lat = rover.location.global_relative_frame.lat # drone's latitude
     lon = rover.location.global_relative_frame.lon
-    location = LocationGlobalRelative(lat,lon,-altitude)
-    goto_drone(location)
-    time.sleep(0.1)
+    location = LocationGlobalRelative(lat, lon, altitude)
+    drone.simple_goto(location)
+    time.sleep(0.5)
