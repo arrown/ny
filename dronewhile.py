@@ -72,28 +72,27 @@ def get_distance_metres(aLocation1, aLocation2):
     dlong = aLocation2.lon - aLocation1.lon
     return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
 
-def goto_position_target_local_ned_drone(north, east, down):
+def goto_drone(targetLocation):
+	distanceToTargetLocation = get_distance_meters(targetLocation,vehicle.location.global_relative_frame)
 
-    msg = drone.message_factory.set_position_target_local_ned_encode(
-        0,       # time_boot_ms (not used)
-        0, 0,    # target system, target component
-        mavutil.mavlink.MAV_FRAME_LOCAL_NED, # frame
-        0b0000111111111000, # type_mask (only positions enabled)
-        north, east, down, # x, y, z positions (or North, East, Down in the MAV_FRAME_BODY_NED frame
-        0, 0, 0, # x, y, z velocity in m/s  (not used)
-        0, 0, 0, # x, y, z acceleration (not supported yet, ignored in GCS_Mavlink)
-        0, 0)    # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink) 
-    # send command to vehicle
-    drone.send_mavlink(msg)
+	vehicle.simple_goto(targetLocation)
+
+	while vehicle.mode.name=="GUIDED":
+		currentDistance = get_distance_meters(targetLocation,vehicle.location.global_relative_frame)
+		if currentDistance<distanceToTargetLocation*.05:
+			print("Reached target waypoint.")
+			time.sleep(2)
+			break
+		time.sleep(1)
+	return None
+
 altitude = 4
 arm_and_takeoff(altitude)
-time.sleep(altitude)
+time.sleep(4)
+
 while True:
-    lat = drone.location.global_relative_frame.lat # drone's latitude
-    lon = drone.location.global_relative_frame.lon # drone's longitude
-    nlat = rover.location.global_relative_frame.lat # rover's latitude
-    nlon = rover.location.global_relative_frame.lon # rover's longitude
-    dnorth = (nlat-lat)*6378137.0*math.pi/180
-    deast = math.pi/180*(nlon-lon)*6378137.0*math.cos(lat/180*math.pi)
-    goto_position_target_local_ned_drone(dnorth,deast,-altitude)
-    time.sleep(1)
+    lat = rover.location.global_relative_frame.lat # drone's latitude
+    lon = rover.location.global_relative_frame.lon
+    location = LocationGlobalRelative(lat,lon,-altitude)
+    goto_drone(location)
+    time.sleep(0.1)
