@@ -163,17 +163,30 @@ def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
 
 arm_and_takeoff(4)
 time.sleep(4)
-goto_rover(15,15)
+goto_rover(10,12)
 # swarm code
+lat = drone.location.global_relative_frame.lat # drone's latitude
+lon = drone.location.global_relative_frame.lon # drone's longitude
+nlat = rover.location.global_relative_frame.lat # rover's latitude
+nlon = rover.location.global_relative_frame.lon # rover's longitude
 
-time.sleep(7)
-goto_rover(15,-15)
+dnorth = (nlat-lat)*6378137.0*math.pi/180
+deast = math.pi/180*(nlon-lon)*6378137.0*math.cos(lat/180*math.pi)
+goto_position_target_local_ned_drone(dnorth,deast,-4)
+
+time.sleep(10)
+goto_rover(-7,-13)
 # swarm code
-time.sleep(7)
-goto_rover(-15,-15)
-time.sleep(7)
-goto_rover(-15,15)
-time.sleep(7)
+lat = drone.location.global_relative_frame.lat # drone's latitude
+lon = drone.location.global_relative_frame.lon # drone's longitude
+nlat = rover.location.global_relative_frame.lat # rover's latitude
+nlon = rover.location.global_relative_frame.lon # rover's longitude
+
+dnorth = (nlat-lat)*6378137.0*math.pi/180
+deast = math.pi/180*(nlon-lon)*6378137.0*math.cos(lat/180*math.pi)
+goto_position_target_local_ned_drone(dnorth,deast,-4)
+
+time.sleep(5)
 drone.mode = VehicleMode("LAND")
 while drone.mode!='LAND':
     time.sleep(1)
