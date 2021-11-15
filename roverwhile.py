@@ -2,49 +2,17 @@ import math
 import time
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative
 from pymavlink import mavutil
-import dronekit_sitl
 print ("connecting to Drone")
-sitl = dronekit_sitl.start_default()
-drone = connect("tcp:127.0.0.1:5773", wait_ready = True)
-drone.airspeed = 2
-drone.groundspeed = 2
+drone = connect("udp:127.0.0.1:14551",baudrate = 57600, wait_ready = True)
+drone.airspeed = 0.3
+drone.groundspeed = 0.7
 time.sleep(1)
 
 print ("connecting to Rover")
-rover = connect("tcp:127.0.0.1:5783", wait_ready = True)
+rover = connect("/dev/ttyUSB0",baudrate = 57600, wait_ready = True)
 rover.groundspeed = 0.7
 time.sleep(1)
 
-def arm_and_takeoff(aTargetAltitude):
-
-    print ("Basic pre-arm checks")
-    # Don't try to arm until autopilot is ready
-    while not drone.is_armable:
-        print (" Waiting for vehicle to initialise...")
-        time.sleep(1)
-
-    print ("Arming motors")
-    # Copter should arm in GUIDED mode
-    drone.mode    = VehicleMode("GUIDED")
-    drone.armed   = True
-
-    # Confirm vehicle armed before attempting to take off
-    while not drone.armed:
-        print (" Waiting for arming...")
-        time.sleep(1)
-
-    print ("Taking off!")
-    drone.simple_takeoff(aTargetAltitude) # Take off to target altitude
-
-    # Wait until the vehicle reaches a safe height before processing the goto (otherwise the command
-    #  after Vehicle.simple_takeoff will execute immediately).
-    while True:
-        print (" Altitude: ", drone.location.global_relative_frame.alt)
-        #Break and return from function just below target altitude.
-        if drone.location.global_relative_frame.alt>=aTargetAltitude*0.95:
-            print ("Reached target altitude")
-            break
-        time.sleep(1)
         
 def get_location_metres(original_location, dNorth, dEast):
 
@@ -72,13 +40,9 @@ def get_distance_metres(aLocation1, aLocation2):
     dlong = aLocation2.lon - aLocation1.lon
     return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
 
-altitude = 4
-arm_and_takeoff(altitude)
-time.sleep(4)
-
 while True:
-    lat = rover.location.global_relative_frame.lat # drone's latitude
-    lon = rover.location.global_relative_frame.lon
-    location = LocationGlobalRelative(lat, lon, altitude)
-    drone.simple_goto(location)
+    lat = drone.location.global_relative_frame.lat # drone's latitude
+    lon = drone.location.global_relative_frame.lon
+    location = LocationGlobalRelative(lat, lon,0)
+    rover.simple_goto(location)
     time.sleep(0.5)
