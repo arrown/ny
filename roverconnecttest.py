@@ -26,8 +26,8 @@ def goto_position_target_local_ned(north, east, down):
 rover.mode = VehicleMode("GUIDED")
 
 while rover.mode!='GUIDED':
-		print("Waiting for change mode")
-		time.sleep(1)
+	print("Waiting for change mode")
+	time.sleep(1)
 print("Rover in GUIDED MODE")
 
 goto_position_target_local_ned(1,0,0)
