@@ -3,16 +3,17 @@ import time
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative
 from pymavlink import mavutil
 print ("connecting to Drone")
-drone = connect("udp:127.0.0.1:14551",baudrate = 57600, wait_ready = True)
+drone = connect("/dev/serial0",baud = 57600, wait_ready = True)
+print ("Drone connected")
 drone.airspeed = 0.3
 drone.groundspeed = 0.7
 time.sleep(1)
 
 print ("connecting to Rover")
-rover = connect("/dev/ttyUSB0",baudrate = 57600, wait_ready = True)
+rover = connect("/dev/ttyUSB0",baud = 57600, wait_ready = True, heartbeat_timeout=120)
+print("Rover connected")
 rover.groundspeed = 0.7
 time.sleep(1)
-
         
 def get_location_metres(original_location, dNorth, dEast):
 
@@ -39,7 +40,10 @@ def get_distance_metres(aLocation1, aLocation2):
     dlat = aLocation2.lat - aLocation1.lat
     dlong = aLocation2.lon - aLocation1.lon
     return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
-
+time.sleep(1)
+print("change rover mode")
+rover.mode = VehicleMode("GUIDED")
+time.sleep(1)
 while True:
     lat = drone.location.global_relative_frame.lat # drone's latitude
     lon = drone.location.global_relative_frame.lon
