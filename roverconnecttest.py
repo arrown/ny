@@ -4,7 +4,7 @@ from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelativ
 from pymavlink import mavutil
 
 print ("connecting to Rover")
-rover = connect("/dev/ttyUSB0",baud = 57600, wait_ready = True, heartbeat_timeout=120)
+rover = connect("/dev/ttyUSB0",baud = 57600, wait_ready = True,timeout = 120, heartbeat_timeout=120)
 print("Rover connected")
 rover.groundspeed = 0.7
 time.sleep(1)
