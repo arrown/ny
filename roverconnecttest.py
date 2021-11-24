@@ -9,19 +9,25 @@ print("Rover connected")
 rover.groundspeed = 0.7
 time.sleep(1)
 
-def goto_position_target_local_ned(north, east, down):
+def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
 
-    msg = rover.message_factory.set_position_target_local_ned_encode(
-        0,       # time_boot_ms (not used)
-        0, 0,    # target system, target component
-        mavutil.mavlink.MAV_FRAME_LOCAL_NED, # frame
-        0b0000111111111000, # type_mask (only positions enabled)
-        north, east, down, # x, y, z positions (or North, East, Down in the MAV_FRAME_BODY_NED frame
-        0, 0, 0, # x, y, z velocity in m/s  (not used)
-        0, 0, 0, # x, y, z acceleration (not supported yet, ignored in GCS_Mavlink)
-        0, 0)    # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink) 
-    # send command to vehicle
-    rover.send_mavlink(msg)
+    currentLocation = rover.location.global_relative_frame
+    targetLocation = get_location_metres(currentLocation, dNorth, dEast)
+    targetDistance = get_distance_metres(currentLocation, targetLocation)
+    gotoFunction(targetLocation)
+    
+    #print "DEBUG: targetLocation: %s" % targetLocation
+    #print "DEBUG: targetLocation: %s" % targetDistance
+    while rover.mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
+        #print "DEBUG: mode: %s" % vehicle.mode.name
+
+        remainingDistance=get_distance_metres(rover.location.global_relative_frame, targetLocation)
+        print("Distance to target: ", remainingDistance)
+        if remainingDistance<=targetDistance*0.2: #Just below target, in case of undershoot.
+            print("Reached target")
+            break;
+        time.sleep(2)
+
 
 rover.mode = VehicleMode("GUIDED")
 
@@ -30,6 +36,7 @@ while rover.mode!='GUIDED':
 	time.sleep(1)
 print("Rover in GUIDED MODE")
 
-goto_position_target_local_ned(1,0,0)
+goto_rover(1,0)
+time.sleep(2)
 print("close vehicle")
 rover.close()
