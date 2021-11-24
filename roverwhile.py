@@ -43,7 +43,10 @@ def get_distance_metres(aLocation1, aLocation2):
 time.sleep(1)
 print("change rover mode")
 rover.mode = VehicleMode("GUIDED")
-time.sleep(1)
+while rover.mode!='GUIDED':
+	print("Waiting for change mode")
+	time.sleep(1)
+print("Rover in GUIDED MODE")
 while True:
     lat = drone.location.global_relative_frame.lat # drone's latitude
     lon = drone.location.global_relative_frame.lon
