@@ -6,7 +6,7 @@ print ("connecting to Drone")
 drone = connect("/dev/serial0",baud = 57600, wait_ready = True, heartbeat_timeout=120)
 print ("Drone connected")
 drone.airspeed = 0.3
-drone.groundspeed = 0.7
+drone.groundspeed = 0.3
 time.sleep(1)
 
 print ("connecting to Rover")
