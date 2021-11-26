@@ -2,16 +2,16 @@ import math
 import time
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative
 from pymavlink import mavutil
-import dronekit_sitl
 print ("connecting to Drone")
-sitl = dronekit_sitl.start_default()
-drone = connect("tcp:127.0.0.1:5773", wait_ready = True)
-drone.airspeed = 2
-drone.groundspeed = 2
+drone = connect("/dev/serial0", wait_ready = True, timeout = 120, heartbeat_timeout=120)
+print ("Drone connected")
+drone.airspeed = 0.3
+drone.groundspeed = 0.3
 time.sleep(1)
 
 print ("connecting to Rover")
-rover = connect("tcp:127.0.0.1:5783", wait_ready = True)
+rover = connect("/dev/ttyUSB0", wait_ready = True, timeout = 120, heartbeat_timeout=120)
+print ("Rover connected")
 rover.groundspeed = 0.7
 time.sleep(1)
 
@@ -81,4 +81,4 @@ while True:
     lon = rover.location.global_relative_frame.lon
     location = LocationGlobalRelative(lat, lon, altitude)
     drone.simple_goto(location)
-    time.sleep(0.5)
+    time.sleep(0.3)
