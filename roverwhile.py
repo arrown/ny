@@ -12,7 +12,7 @@ time.sleep(1)
 print ("connecting to Rover")
 rover = connect("/dev/ttyUSB0",baud = 57600, wait_ready = True,timeout = 120, heartbeat_timeout=120)
 print("Rover connected")
-rover.groundspeed = 0.7
+rover.groundspeed = 1
 time.sleep(1)
         
 def get_location_metres(original_location, dNorth, dEast):
@@ -39,7 +39,7 @@ def get_distance_metres(aLocation1, aLocation2):
 
     dlat = aLocation2.lat - aLocation1.lat
     dlong = aLocation2.lon - aLocation1.lon
-    return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
+    return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113197e5
 time.sleep(1)
 print("change rover mode")
 rover.mode = VehicleMode("GUIDED")
@@ -52,4 +52,4 @@ while True:
     lon = drone.location.global_relative_frame.lon
     location = LocationGlobalRelative(lat, lon,0)
     rover.simple_goto(location)
-    time.sleep(0.5)
+    time.sleep(0.3)
