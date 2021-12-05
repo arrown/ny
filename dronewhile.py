@@ -77,8 +77,8 @@ arm_and_takeoff(altitude)
 time.sleep(4)
 start = time.perf_counter()
 while True:
-    lat = rover.location.global_relative_frame.lat # drone's latitude
-    lon = rover.location.global_relative_frame.lon # drone's longitude
+    lat = rover.location.global_relative_frame.lat # rover's latitude
+    lon = rover.location.global_relative_frame.lon # rover's longitude
     location = LocationGlobalRelative(lat, lon, altitude)
     drone.simple_goto(location)
     end = time.perf_counter()
