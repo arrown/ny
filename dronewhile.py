@@ -83,7 +83,7 @@ while True:
     drone.simple_goto(location)
     end = time.perf_counter()
     tmp = end-start
-    if tmp >=30:
+    if tmp >=15:
         print("done")
         break
     time.sleep(2)
