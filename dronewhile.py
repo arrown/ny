@@ -75,10 +75,23 @@ def get_distance_metres(aLocation1, aLocation2):
 altitude = 4
 arm_and_takeoff(altitude)
 time.sleep(4)
-
+start = time.perf_counter()
 while True:
     lat = rover.location.global_relative_frame.lat # drone's latitude
     lon = rover.location.global_relative_frame.lon # drone's longitude
     location = LocationGlobalRelative(lat, lon, altitude)
     drone.simple_goto(location)
-    time.sleep(0.3)
+    end = time.perf_counter()
+    tmp = end-start
+    if tmp >=30:
+        print("done")
+        break
+    time.sleep(2)
+time.sleep(20)
+vehicle.mode = VehicleMode("LAND")
+while vehicle.mode!='LAND':
+    time.sleep(1)
+    print("Waiting for drone to land")
+print("Landing..")
+print("close vehicle")
+vehicle.close()
