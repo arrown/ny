@@ -87,7 +87,7 @@ while True:
         print("done")
         break
     time.sleep(2)
-time.sleep(20)
+time.sleep(15)
 vehicle.mode = VehicleMode("LAND")
 while vehicle.mode!='LAND':
     time.sleep(1)
