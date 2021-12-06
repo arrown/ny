@@ -88,10 +88,13 @@ while True:
         break
     time.sleep(2)
 time.sleep(15)
-vehicle.mode = VehicleMode("LAND")
-while vehicle.mode!='LAND':
+drone.mode = VehicleMode("LAND")
+while drone.mode!='LAND':
     time.sleep(1)
     print("Waiting for drone to land")
 print("Landing..")
-print("close vehicle")
-vehicle.close()
+print("close drone")
+drone.close()
+print("close rover")
+rover.close()
+
