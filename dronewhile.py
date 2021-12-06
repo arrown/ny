@@ -10,7 +10,7 @@ drone.groundspeed = 0.3
 time.sleep(1)
 
 print ("connecting to Rover")
-rover = connect("/dev/ttyUSB0", wait_ready = True, timeout = 120, heartbeat_timeout=120)
+rover = connect("/dev/ttyUSB0",baud = 57600, wait_ready = True, timeout = 120, heartbeat_timeout=120)
 print ("Rover connected")
 rover.groundspeed = 0.7
 time.sleep(1)
