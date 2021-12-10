@@ -1,3 +1,4 @@
+# import ---------------------------------------------------------------------------------------------
 import numpy as np
 import cv2
 import cv2.aruco as aruco
@@ -5,6 +6,7 @@ import sys, time, math
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command
 from pymavlink import mavutil
 
+# connect to drone-------------------------------------------------------------------------------------
 print ("connecting to Drone")
 drone = connect("/dev/ttyACM0", wait_ready = True, timeout = 120, heartbeat_timeout=120)
 print ("Drone connected")
@@ -12,14 +14,15 @@ drone.airspeed = 0.3
 drone.groundspeed = 0.3
 time.sleep(1)
 
+# connect to rover--------------------------------------------------------------------------------------
 print ("connecting to Rover")
-rover = connect("udp:127.0.0.1:14552",baud = 57600, wait_ready = True, timeout = 120, heartbeat_timeout=120)
+rover = connect("/dev/ttyUSB0",baud = 57600, wait_ready = True, timeout = 120, heartbeat_timeout=120)
 print ("Rover connected")
 rover.groundspeed = 0.7
 time.sleep(1)
 
-#------------------------------------------------------------
-
+# function----------------------------------------------------------------------------------------------
+# source from dronekit
 def arm_and_takeoff(aTargetAltitude):
 
     print ("Basic pre-arm checks")
@@ -70,18 +73,19 @@ def get_location_metres(original_location, dNorth, dEast):
         
     return targetlocation;
 
-
 def get_distance_metres(aLocation1, aLocation2):
 
     dlat = aLocation2.lat - aLocation1.lat
     dlong = aLocation2.lon - aLocation1.lon
     return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
 
-
-altitude = 4
-arm_and_takeoff(altitude)
+# main--------------------------------------------------------------------------------------------------------
+altitude = 4 # target altitude
+arm_and_takeoff(altitude) # take off
 time.sleep(4)
+
 start = time.perf_counter()
+# swarm start
 while True:
     lat = rover.location.global_relative_frame.lat # rover's latitude
     lon = rover.location.global_relative_frame.lon # rover's longitude
@@ -101,5 +105,57 @@ while True:
             start = time.perf_counter()
             pass
     time.sleep(2)
-    
+# swarm end
 
+# marker landing
+# initialize-------------------------------------------------------------------------------------------
+id_to_find = 0
+marker_size = 20
+calib_path  = ""
+cameraMatrix   = np.loadtxt(calib_path+'cameraMatrix.txt', delimiter=',')
+cameraDistortion   = np.loadtxt(calib_path+'cameraDistortion.txt', delimiter=',')
+horizontal_res = 320
+vertical_res = 240
+horizontal_fov = 62.2 * (math.pi / 180 ) ##Pi cam V1: 53.5 V2: 62.2
+vertical_fov = 48.8 * (math.pi / 180)    ##Pi cam V1: 41.41 V2: 48.8
+R_flip  = np.zeros((3,3), dtype=np.float32)
+R_flip[0,0] = 1.0
+R_flip[1,1] =-1.0
+R_flip[2,2] =-1.0
+
+aruco_dict  = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
+parameters  = aruco.DetectorParameters_create()
+
+cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+fps = 1
+
+# main---------------------------------------------------------------------------------------------------------------
+while True:
+
+    ret, frame = cap.read()
+    
+    gray    = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    
+    corners, ids, rejected = aruco.detectMarkers(image=gray, dictionary=aruco_dict, parameters=parameters)
+    
+    if ids is not None and ids[0] == id_to_find:
+        
+        ret = aruco.estimatePoseSingleMarkers(corners,marker_size,cameraMatrix=cameraMatrix,distCoeffs=cameraDistortion)
+        (rvec, tvec) = (ret[0][0, 0, :], ret[1][0, 0, :])
+        x = '{:.2f}'.format(tvec[0])
+        y = '{:.2f}'.format(tvec[1])
+        z = '{:.2f}'.format(tvec[2])
+            
+        y_sum = 0
+        x_sum = 0
+            
+        x_sum = corners[0][0][0][0]+ corners[0][0][1][0]+ corners[0][0][2][0]+ corners[0][0][3][0]
+        y_sum = corners[0][0][0][1]+ corners[0][0][1][1]+ corners[0][0][2][1]+ corners[0][0][3][1]
+    
+        x_avg = x_sum*.25
+        y_avg = y_sum*.25
+            
+        x_ang = (x_avg - horizontal_res*.5)*(horizontal_fov/horizontal_res)
+        y_ang = (y_avg - vertical_res*.5)*(vertical_fov/vertical_res)
