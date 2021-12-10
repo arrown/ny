@@ -149,8 +149,8 @@ while True:
     if tmp >=15:
         a = input("continue?")
         if a == 'y':
-            start = time.perf_counter()
-            pass
+            print("marker start")
+            break
         elif a == 'n':
             print("done")
             time.sleep(15)
@@ -164,8 +164,8 @@ while True:
             print("close rover")
             rover.close()
         else:
-            start = time.perf_counter()        
-            pass
+            print("marker start")
+            break
     time.sleep(2)
     
 #------------------------Marker Start------------------------------------ 
