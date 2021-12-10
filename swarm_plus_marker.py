@@ -113,22 +113,21 @@ deg_2_rad   = 1.0/rad_2_deg
 #-------------- LANDING MARKER  
 #--------------------------------------------------    
 #--- Define Tag
-id_to_find      = 72
-marker_size     = 10 #- [cm]
+id_to_find      = 1
+marker_size     = 20 #- [cm]
 freq_send       = 1 #- Hz
 
-land_alt_cm         = 50.0
+land_alt_cm         = 100
 angle_descend       = 20*deg_2_rad
 land_speed_cms      = 30.0
 
 
 
 #--- Get the camera calibration path
-# Find full directory path of this script, used for loading config and other files
-cwd                 = path.dirname(path.abspath(__file__))
-calib_path          = cwd+"/../opencv/"
-camera_matrix       = np.loadtxt(calib_path+'cameraMatrix_raspi.txt', delimiter=',')
-camera_distortion   = np.loadtxt(calib_path+'cameraDistortion_raspi.txt', delimiter=',')                                      
+
+calib_path  = ""
+camera_matrix   = np.loadtxt(calib_path+'cameraMatrix.txt', delimiter=',')
+camera_distortion   = np.loadtxt(calib_path+'cameraDistortion.txt', delimiter=',')                                    
 aruco_tracker       = ArucoSingleTracker(id_to_find=id_to_find, marker_size=marker_size, show_video=False, 
                 camera_matrix=camera_matrix, camera_distortion=camera_distortion)
                 
@@ -149,23 +148,14 @@ while True:
     if tmp >=15:
         a = input("continue?")
         if a == 'y':
-            print("marker start")
-            break
+            start = time.perf_counter()
+            pass
         elif a == 'n':
-            print("done")
-            time.sleep(15)
-            drone.mode = VehicleMode("LAND")
-            while drone.mode!='LAND':
-              time.sleep(1)
-              print("Waiting for drone to land")
-            print("Landing..")
-            print("close drone")
-            drone.close()
-            print("close rover")
-            rover.close()
-        else:
-            print("marker start")
+            print("start landing")
             break
+        else:
+            start = time.perf_counter()
+            pass
     time.sleep(2)
     
 #------------------------Marker Start------------------------------------ 
