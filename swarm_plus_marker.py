@@ -118,10 +118,6 @@ horizontal_res = 320
 vertical_res = 240
 horizontal_fov = 62.2 * (math.pi / 180 ) ##Pi cam V1: 53.5 V2: 62.2
 vertical_fov = 48.8 * (math.pi / 180)    ##Pi cam V1: 41.41 V2: 48.8
-R_flip  = np.zeros((3,3), dtype=np.float32)
-R_flip[0,0] = 1.0
-R_flip[1,1] =-1.0
-R_flip[2,2] =-1.0
 
 aruco_dict  = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
 parameters  = aruco.DetectorParameters_create()
@@ -159,3 +155,20 @@ while True:
             
         x_ang = (x_avg - horizontal_res*.5)*(horizontal_fov/horizontal_res)
         y_ang = (y_avg - vertical_res*.5)*(vertical_fov/vertical_res)
+        
+        marxpos = (x_avg-160)*tvec[2]*math.tan(horizontal_fov/2)/160
+        marypos = (y_avg-120)*tvec[2]*math.tan(vertical_fov/2)/120
+        marker_lat, marker_lon  = get_location_metres(drone.location.global_relative_frame, -0.01*marypos, 0.01*marxpos)
+        altitude = altitude*0.9
+        location_marker = LocationGlobalRelative(marker_lat, marker_lon, altitude)
+        drone.simple_goto(location_marker)
+        if altitude <= 1:
+            drone.mode = VehicleMode("LAND")
+            while drone.mode!='LAND':
+                time.sleep(1)
+                print("Waiting for drone to land")
+print("landing..")                
+print("close drone")
+drone.close()
+print("close rover")
+rover.close()
