@@ -167,6 +167,8 @@ while True:
             while drone.mode!='LAND':
                 time.sleep(1)
                 print("Waiting for drone to land")
+                
+# disconnect vehicles-------------------------------------------------------------------------------------------------------------------
 print("landing..")                
 print("close drone")
 drone.close()
