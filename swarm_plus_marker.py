@@ -1,8 +1,7 @@
-from os import sys, path
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-
-import math
-import time
+import numpy as np
+import cv2
+import cv2.aruco as aruco
+import sys, time, math
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command
 from pymavlink import mavutil
 from opencv.lib_aruco_pose import *
