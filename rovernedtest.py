@@ -46,4 +46,38 @@ def goto_position_target_local_ned(north, east, down):
         0, 0)    # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink) 
     # send command to vehicle
     rover.send_mavlink(msg)
-goto_position_target_local_ned(2,0,0)
+def arming_rover():
+    print ("Basic pre-arm checks")
+    while not rover.is_armable:
+        print("waiting for vehicle to initialise...")
+        time.sleep(1)
+    
+    print ("Arming motors")
+    rover.mode = VehicleMode("GUIDED")
+    rover.armed = True
+  
+    while not rover.armed:
+        print("waiting for arming...")
+        time.sleep(1)
+
+def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
+
+    currentLocation = rover.location.global_relative_frame
+    targetLocation = get_location_metres(currentLocation, dNorth, dEast)
+    targetDistance = get_distance_metres(currentLocation, targetLocation)
+    gotoFunction(targetLocation)
+    
+    #print "DEBUG: targetLocation: %s" % targetLocation
+    #print "DEBUG: targetLocation: %s" % targetDistance
+    while rover.mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
+        #print "DEBUG: mode: %s" % vehicle.mode.name
+
+        remainingDistance=get_distance_metres(rover.location.global_relative_frame, targetLocation)
+        print("Distance to target: ", remainingDistance)
+        if remainingDistance<=targetDistance*0.2: #Just below target, in case of undershoot.
+            print("Reached target")
+            break;
+        time.sleep(2)
+arming_rover()
+goto_rover(2,0)
+rover.close()
