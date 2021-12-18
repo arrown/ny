@@ -130,6 +130,14 @@ while True:
             while drone.mode!='LAND':
                 time.sleep(1)
                 print("Waiting for drone to land")
+        elif ids in None:
+            print("marker is not detected")
+            iland = input("do you want to land?")
+            if iland == "y":
+                drone.mode = VehicleMode("LAND")
+                while drone.mode!='LAND':
+                    time.sleep(1)
+                    print("Waiting for drone to land")
 
 print("landing..")                
 print("close drone")
