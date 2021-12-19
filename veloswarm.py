@@ -3,14 +3,14 @@ import time
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative
 from pymavlink import mavutil
 print ("connecting to Drone")
-drone = connect("/dev/ttyACM0", wait_ready = True, timeout = 120, heartbeat_timeout=120)
+drone = connect("udp:127.0.0.1:14550",baud = 57600, wait_ready = True, timeout = 120, heartbeat_timeout=120)
 print ("Drone connected")
 drone.airspeed = 0.3
 drone.groundspeed = 0.3
 time.sleep(1)
 
 print ("connecting to Rover")
-rover = connect("udp:127.0.0.1:14552",baud = 57600, wait_ready = True, timeout = 120, heartbeat_timeout=120)
+rover = connect("/dev/ttyUSB0",baud = 57600, wait_ready = True, timeout = 120, heartbeat_timeout=120)
 print ("Rover connected")
 rover.groundspeed = 0.7
 time.sleep(1)
