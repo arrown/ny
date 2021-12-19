@@ -125,7 +125,7 @@ while True:
         
 
         marker_lat, marker_lon  = get_location_metres(location, -0.01*marypos, 0.01*marxpos)
-        altitude = altitude*0.9
+        altitude = altitude*0.8
         location_marker = LocationGlobalRelative(marker_lat, marker_lon, altitude)
         drone.simple_goto(location_marker)
         if altitude <= 1:
