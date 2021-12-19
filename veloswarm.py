@@ -119,7 +119,7 @@ rz = 0
 start = time.perf_counter()
 goto_position_target_local_ned(rx,ry,rz)
 end = time.perf_counter()
-duration = end-start
+duration = round(end-start)
 time.sleep(4)
 vx = rx/duration
 vy = ry/duration
