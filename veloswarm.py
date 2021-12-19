@@ -119,10 +119,11 @@ rz = 0
 start = time.perf_counter()
 goto_position_target_local_ned(rx,ry,rz)
 end = time.perf_counter()
+tdu = end-start
 duration = round(end-start)
 time.sleep(4)
-vx = rx/duration
-vy = ry/duration
+vx = rx/tdu
+vy = ry/tdu
 vz = 0
 time.sleep(1)
 send_ned_velocity(vx, vy, vz, duration)
