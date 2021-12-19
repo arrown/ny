@@ -91,6 +91,7 @@ altitude = 4 # target altitude
 arm_and_takeoff(altitude) # take off
 time.sleep(4)
 
+location = drone.location.global_relative_frame
 while True:
 
     ret, frame = cap.read()
@@ -121,7 +122,7 @@ while True:
         
         marxpos = (x_avg-160)*tvec[2]*math.tan(horizontal_fov/2)/160
         marypos = (y_avg-120)*tvec[2]*math.tan(vertical_fov/2)/120
-        location = drone.location.global_relative_frame
+        
 
         marker_lat, marker_lon  = get_location_metres(location, -0.01*marypos, 0.01*marxpos)
         altitude = altitude*0.9
@@ -132,14 +133,7 @@ while True:
             while drone.mode!='LAND':
                 time.sleep(1)
                 print("Waiting for drone to land")
-    elif ids is None:
-        print("marker is not detected")
-        iland = input("do you want to land?")
-        if iland == "y":
-            drone.mode = VehicleMode("LAND")
-            while drone.mode!='LAND':
-                time.sleep(1)
-                print("Waiting for drone to land")
+    
 
 print("landing..")                
 print("close drone")
