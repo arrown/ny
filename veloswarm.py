@@ -106,6 +106,24 @@ def send_ned_velocity(velocity_x, velocity_y, velocity_z, duration):
     for x in range(0,duration):
         drone.send_mavlink(msg)
         time.sleep(1)
+def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
+
+    currentLocation = rover.location.global_relative_frame
+    targetLocation = get_location_metres(currentLocation, dNorth, dEast)
+    targetDistance = get_distance_metres(currentLocation, targetLocation)
+    gotoFunction(targetLocation)
+    
+    #print "DEBUG: targetLocation: %s" % targetLocation
+    #print "DEBUG: targetLocation: %s" % targetDistance
+    while rover.mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
+        #print "DEBUG: mode: %s" % vehicle.mode.name
+
+        remainingDistance=get_distance_metres(rover.location.global_relative_frame, targetLocation)
+        print("Distance to target: ", remainingDistance)
+        if remainingDistance<=targetDistance*0.2: #Just below target, in case of undershoot.
+            print("Reached target")
+            break;
+        time.sleep(2)
         
 altitude = 4
 arm_and_takeoff(altitude)
@@ -114,7 +132,7 @@ rx = 2
 ry = 0
 rz = 0
 start = time.perf_counter()
-goto_position_target_local_ned(rx,ry,rz)
+goto_rover(rx,ry)
 end = time.perf_counter()
 tdu = end-start
 duration = round(end-start)
@@ -125,7 +143,7 @@ vz = 0
 time.sleep(1)
 send_ned_velocity(vx, vy, vz, duration)
 time.sleep(4)
-goto_position_target_local_ned(rx,ry,rz)
+goto_rover(rx,ry,rz)
 time.sleep(4)
 drone.mode = VehicleMode("LAND")
 while drone.mode!='LAND':
