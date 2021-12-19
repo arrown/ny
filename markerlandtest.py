@@ -91,7 +91,7 @@ altitude = 4 # target altitude
 arm_and_takeoff(altitude) # take off
 time.sleep(4)
 
-location = drone.location.global_relative_frame
+
 while True:
 
     ret, frame = cap.read()
@@ -99,7 +99,7 @@ while True:
     gray    = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
     corners, ids, rejected = aruco.detectMarkers(image=gray, dictionary=aruco_dict, parameters=parameters)
-    
+    location = drone.location.global_relative_frame
     if ids is not None and ids[0] == id_to_find:
         
         ret = aruco.estimatePoseSingleMarkers(corners,marker_size,cameraMatrix=cameraMatrix,distCoeffs=cameraDistortion)
