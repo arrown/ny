@@ -122,6 +122,7 @@ while True:
         marxpos = (x_avg-160)*tvec[2]*math.tan(horizontal_fov/2)/160
         marypos = (y_avg-120)*tvec[2]*math.tan(vertical_fov/2)/120
         location = drone.location.global_relative_frame
+
         marker_lat, marker_lon  = get_location_metres(location, -0.01*marypos, 0.01*marxpos)
         altitude = altitude*0.9
         location_marker = LocationGlobalRelative(marker_lat, marker_lon, altitude)
