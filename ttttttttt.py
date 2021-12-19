@@ -5,9 +5,9 @@ import sys, time, math
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command
 from pymavlink import mavutil
 
-print ("connecting to Drone")
-drone = connect("/dev/ttyACM0", wait_ready = True, timeout = 120, heartbeat_timeout=120)
-print ("Drone connected")
+print ("connecting to rover")
+rover = connect("/dev/ttyACM0", wait_ready = True, timeout = 120, heartbeat_timeout=120)
+print ("rover connected")
 
 def get_location_metres(original_location, dNorth, dEast):
 
@@ -34,6 +34,27 @@ def get_distance_metres(aLocation1, aLocation2):
     dlong = aLocation2.lon - aLocation1.lon
     return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
 
+def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
+
+    currentLocation = rover.location.global_relative_frame
+    targetLocation = get_location_metres(currentLocation, dNorth, dEast)
+    targetDistance = get_distance_metres(currentLocation, targetLocation)
+    gotoFunction(targetLocation)
+    
+    #print "DEBUG: targetLocation: %s" % targetLocation
+    #print "DEBUG: targetLocation: %s" % targetDistance
+    while rover.mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
+        #print "DEBUG: mode: %s" % vehicle.mode.name
+
+        remainingDistance=get_distance_metres(rover.location.global_relative_frame, targetLocation)
+        print("Distance to target: ", remainingDistance)
+        if remainingDistance<=targetDistance*0.2: #Just below target, in case of undershoot.
+            print("Reached target")
+            break;
+        time.sleep(2)
+
+goto_rover(2,0)
 while True:
-    marker_lat, marker_lon  = get_location_metres(drone.location.global_relative_frame, -0.01*marypos, 0.01*marxpos)
-    print(marker_lat,marker_lon)
+    
+    [vx,vy,vz] = rover.velocity
+    print(vx,vy,vz)
