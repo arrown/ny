@@ -78,6 +78,9 @@ def goto_rover(dNorth, dEast, gotoFunction=rover.simple_goto):
             print("Reached target")
             break;
         time.sleep(2)
-arming_rover()
-goto_rover(2,0)
+
+time.sleep(1)
+rover.mode = VehicleMode("GUIDED")
+
+position_target_local_ned(2,0,0)
 rover.close()
