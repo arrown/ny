@@ -75,8 +75,8 @@ cameraMatrix   = np.loadtxt(calib_path+'cameraMatrix.txt', delimiter=',')
 cameraDistortion   = np.loadtxt(calib_path+'cameraDistortion.txt', delimiter=',')
 horizontal_res = 320
 vertical_res = 240
-horizontal_fov = 62.2 * (math.pi / 180 ) ##Pi cam V1: 53.5 V2: 62.2
-vertical_fov = 48.8 * (math.pi / 180)    ##Pi cam V1: 41.41 V2: 48.8
+horizontal_fov = 63.215 * (math.pi / 180 ) ##Pi cam V1: 53.5 V2: 62.2
+vertical_fov = 49.744 * (math.pi / 180)    ##Pi cam V1: 41.41 V2: 48.8
 
 aruco_dict  = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
 parameters  = aruco.DetectorParameters_create()
